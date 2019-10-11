@@ -19,19 +19,19 @@ public class JobLoggerController {
     }
 
     @GetMapping(path = "message")
-    public void saveMessageLog() {
+    public void saveMessageLog() throws Exception {
         String message = "This is a message!";
         jobLoggerService.saveLog(message, LevelEnum.MESSAGE.getLevel());
     }
 
-    @GetMapping(path = "message")
-    public void saveErrorLog() {
+    @GetMapping(path = "error")
+    public void saveErrorLog() throws Exception {
         String message = "This is a error!";
         jobLoggerService.saveLog(message, LevelEnum.ERROR.getLevel());
     }
 
-    @GetMapping(path = "message")
-    public void saveWarningLog() {
+    @GetMapping(path = "warning")
+    public void saveWarningLog() throws Exception {
         String message = "This is a warning!";
         jobLoggerService.saveLog(message, LevelEnum.WARNING.getLevel());
     }

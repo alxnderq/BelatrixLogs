@@ -1,14 +1,9 @@
 package com.belatrixsf.belatrixlogs.entities;
 
-import lombok.Builder;
-import lombok.Data;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "log")
-@Data
-@Builder
 public class Log {
 
     @Id
@@ -20,5 +15,30 @@ public class Log {
 
     @Column(name = "level")
     private Integer level;
+
+    public Log(String message, Integer level) {
+        this.message = message;
+        this.level = level;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
 
 }

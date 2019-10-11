@@ -1,10 +1,11 @@
 package com.belatrixsf.belatrixlogs.services.impl;
 
 import com.belatrixsf.belatrixlogs.enums.LevelEnum;
+import com.belatrixsf.belatrixlogs.exceptions.InvalidConfigException;
+import com.belatrixsf.belatrixlogs.exceptions.InvalidLevelLogException;
 import com.belatrixsf.belatrixlogs.services.IJobLoggerService;
 import com.belatrixsf.belatrixlogs.services.ILogService;
 import com.belatrixsf.belatrixlogs.utils.LevelLogUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class JobLoggerService implements IJobLoggerService {
@@ -47,6 +51,7 @@ public class JobLoggerService implements IJobLoggerService {
         validateConfig(message, level);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(LevelLogUtils.getMessageWithLevel(level))
+            .append(" ")
             .append(DateFormat.getDateInstance(DateFormat.LONG).format(new Date()))
             .append(" ")
             .append(message.trim());
@@ -64,13 +69,13 @@ public class JobLoggerService implements IJobLoggerService {
 
     private void validateConfig(String message, Integer level) throws Exception {
         if (!isValidMessage(message)) {
-            throw new Exception("Message is empty!");
+            throw new NullPointerException("Message is null or empty!");
         }
         if (!isValidConfiguration()) {
-            throw new Exception("Configuration is invalid!");
+            throw new InvalidConfigException("Configuration is invalid!");
         }
         if (!isValidLevelLog(level)) {
-            throw new Exception("Level log must be specified!");
+            throw new InvalidLevelLogException("Level log must be specified!");
         }
     }
 
@@ -83,6 +88,9 @@ public class JobLoggerService implements IJobLoggerService {
     }
 
     private boolean isValidLevelLog(Integer level) {
-        return (logMessage || logError || logWarning) && EnumUtils.isValidEnum(LevelEnum.class, String.valueOf(level));
+        List<Integer> levelValues = Stream.of(LevelEnum.values())
+            .map(LevelEnum::getLevel)
+            .collect(Collectors.toList());
+        return (logMessage || logError || logWarning) && levelValues.contains(level);
     }
 }
